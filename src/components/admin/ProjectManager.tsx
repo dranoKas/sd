@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'sonner';
 import { Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react';
+import ProjectModal from './ProjectModal';
+import ImageManager from './ImageManager';
 
 interface Project {
   id: string;
@@ -10,6 +12,8 @@ interface Project {
   category: string[];
   technologies: string[];
   demo_url?: string;
+  repo_url?: string;
+  main_image_url?: string;
 }
 
 const ProjectManager = () => {
@@ -17,6 +21,8 @@ const ProjectManager = () => {
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImageManagerOpen, setIsImageManagerOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProjects();
@@ -26,8 +32,7 @@ const ProjectManager = () => {
     try {
       const { data, error } = await supabase
         .from('projects')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('*, project_images(*)');
 
       if (error) throw error;
       setProjects(data || []);
@@ -54,6 +59,11 @@ const ProjectManager = () => {
     } catch (error) {
       toast.error('Erreur lors de la suppression');
     }
+  };
+
+  const handleImageManager = (projectId: string) => {
+    setSelectedProjectId(projectId);
+    setIsImageManagerOpen(true);
   };
 
   if (loading) {
@@ -88,6 +98,15 @@ const ProjectManager = () => {
             key={project.id}
             className="bg-white dark:bg-gray-900 rounded-lg shadow-sm overflow-hidden"
           >
+            {project.main_image_url && (
+              <div className="h-48 overflow-hidden">
+                <img
+                  src={project.main_image_url}
+                  alt={project.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
             <div className="p-6">
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                 {project.title}
@@ -124,7 +143,7 @@ const ProjectManager = () => {
                   <Trash2 className="w-5 h-5" />
                 </button>
                 <button
-                  onClick={() => {/* Gérer les images */}}
+                  onClick={() => handleImageManager(project.id)}
                   className="p-2 text-gray-600 dark:text-gray-400 hover:text-green-500 dark:hover:text-green-400"
                 >
                   <ImageIcon className="w-5 h-5" />
@@ -135,7 +154,25 @@ const ProjectManager = () => {
         ))}
       </div>
 
-      {/* Modal pour ajouter/éditer un projet sera ajouté ici */}
+      {isModalOpen && (
+        <ProjectModal
+          project={selectedProject}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={fetchProjects}
+        />
+      )}
+
+      {isImageManagerOpen && selectedProjectId && (
+        <ImageManager
+          projectId={selectedProjectId}
+          isOpen={isImageManagerOpen}
+          onClose={() => {
+            setIsImageManagerOpen(false);
+            setSelectedProjectId(null);
+          }}
+        />
+      )}
     </div>
   );
 };

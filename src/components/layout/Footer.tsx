@@ -1,11 +1,12 @@
 import React from 'react';
 import { personalData } from '../../data/portfolioData';
-import { Github, Linkedin, Twitter } from 'lucide-react';
+import { Github, Linkedin, Twitter, Instagram } from 'lucide-react';
 
 const iconMap: Record<string, React.ReactNode> = {
   Github: <Github className="w-5 h-5" />,
   Linkedin: <Linkedin className="w-5 h-5" />,
-  Twitter: <Twitter className="w-5 h-5" />
+  Twitter: <Twitter className="w-5 h-5" />,
+  Instagram: <Instagram className="w-5 h-5" />
 };
 
 const Footer: React.FC = () => {
