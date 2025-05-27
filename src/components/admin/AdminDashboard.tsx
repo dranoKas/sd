@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Menu, X, Home, FileText, Image, LogOut, Settings } from 'lucide-react';
+import { Menu, X, Home, FileText, Image, LogOut, Settings, User } from 'lucide-react';
 import { toast } from 'sonner';
 import ContentManager from './ContentManager';
 import ProjectManager from './ProjectManager';
 import SecuritySettings from './SecuritySettings';
+import ProfileManager from './ProfileManager';
 
 const AdminDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -89,6 +90,18 @@ const AdminDashboard = () => {
           </Link>
 
           <Link
+            to="/admin/profile"
+            className={`flex items-center px-4 py-2 mt-2 rounded-lg transition-colors ${
+              isActive('/admin/profile')
+                ? 'bg-blue-500 text-white'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+            }`}
+          >
+            <User className="h-5 w-5 mr-3" />
+            Profile
+          </Link>
+
+          <Link
             to="/admin/security"
             className={`flex items-center px-4 py-2 mt-2 rounded-lg transition-colors ${
               isActive('/admin/security')
@@ -129,7 +142,7 @@ const AdminDashboard = () => {
                 element={
                   <div className="text-gray-800 dark:text-white">
                     <h2 className="text-2xl font-semibold mb-6">
-                      Bienvenue dans l'interface d\'administration
+                      Bienvenue dans l'interface d'administration
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
                       Sélectionnez une section dans le menu pour gérer votre contenu.
@@ -163,16 +176,16 @@ const AdminDashboard = () => {
                         </Link>
                       </div>
                       <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-sm">
-                        <Settings className="h-8 w-8 text-blue-500 mb-4" />
-                        <h3 className="text-lg font-medium mb-2">Paramètres de sécurité</h3>
+                        <User className="h-8 w-8 text-blue-500 mb-4" />
+                        <h3 className="text-lg font-medium mb-2">Gestion du profil</h3>
                         <p className="text-gray-600 dark:text-gray-400 mb-4">
-                          Gérez vos identifiants de connexion.
+                          Gérez votre profil et votre photo.
                         </p>
                         <Link
-                          to="/admin/security"
+                          to="/admin/profile"
                           className="text-blue-500 hover:text-blue-600 font-medium"
                         >
-                          Gérer la sécurité →
+                          Gérer le profil →
                         </Link>
                       </div>
                     </div>
@@ -181,6 +194,7 @@ const AdminDashboard = () => {
               />
               <Route path="content" element={<ContentManager />} />
               <Route path="projects" element={<ProjectManager />} />
+              <Route path="profile" element={<ProfileManager />} />
               <Route path="security" element={<SecuritySettings />} />
             </Routes>
           </div>
